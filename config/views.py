@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .serializer import UserSerializer
+from .serializers import UserSerializer
 from .models import User
 
 # ViewSet의 장점?
