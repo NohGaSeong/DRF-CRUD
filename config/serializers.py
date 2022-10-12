@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import User # 선언한 모델
+from .models import Addresses
 
-class UserSerializer(serializers.ModelSerializer):
+
+class AddressesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('id','username','age','city')
+        model = Addresses
+        fields = ['name', 'phone_number', 'address']

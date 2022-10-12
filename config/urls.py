@@ -1,10 +1,8 @@
-from django.urls import include, path
-from rest_framework.routers import DefaultRouter
-from .views import UserViewSet
+from django.conf.urls import url, include
+from django.contrib.auth.models import User
+from rest_framework import routers, serializers, viewsets
 
-router = DefaultRouter()
-router.register(r"user", UserViewSet)
-
-urlpatterns = [
-    path("", include(router.urls))
-]
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['url','username','email','is_staffg']
