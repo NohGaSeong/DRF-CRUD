@@ -39,3 +39,15 @@ def address(request, pk):
     elif request.method == 'DELETE':
         address_object.delete()
         return HttpResponse(status=204)
+
+@csrf_exempt
+def login(request):
+
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        login_name = data['name ']
+        login_object = Address.objects.get(name=login_name)
+        if data['phone_number'] == login_object:
+            return HttpResponse(status=200)
+        else :
+            return HttpResponse(status=400)
