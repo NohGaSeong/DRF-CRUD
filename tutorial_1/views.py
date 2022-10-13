@@ -19,3 +19,23 @@ def address_list(request):
             return JsonResponse(serializer.data, status = 200)
         return JsonResponse(serializer.errors, status = 400)
 
+@csrf_exempt
+def address(request, pk):
+
+    address_object = Address.objects.get(pk=pk)
+
+    if request.method == 'GET':
+        serializer = AddressSerializers(address_object)
+        return JsonResponse(serializer.data, safe=False)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = AddressSerializers(address_object, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status = 400)
+
+    elif request.method == 'DELETE':
+        address_object.delete()
+        return HttpResponse(status=204)
