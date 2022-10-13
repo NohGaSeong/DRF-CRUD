@@ -45,7 +45,7 @@ def login(request):
 
     if request.method == 'POST':
         data = JSONParser().parse(request)
-        login_name = data['name ']
+        login_name = data['name']
         login_object = Address.objects.get(name=login_name)
         if data['phone_number'] == login_object:
             return HttpResponse(status=200)
