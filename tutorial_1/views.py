@@ -5,6 +5,7 @@ from rest_framework.parsers import JSONParser
 from .models import Address
 from .serializers import AddressSerializers
 
+@csrf_exempt
 def address_list(request):
     if request.method == 'GET':
         query_set = Address.objects.all()
