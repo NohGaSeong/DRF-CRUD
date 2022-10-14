@@ -1,5 +1,5 @@
- from rest_framework import serializers
- from tutorial_serializer.models import Snippet, LANGUAGE_CHOICES, STYLE_CHOICES
+from rest_framework import serializers
+from tutorial_serializer.models import Snippet, LANGUAGE_CHOICES, STYLE_CHOICES
 #
 # 아무것도 안쓴. 순수 Serializer 을 구현하면 아래와 같은 코드가 나온다.
 # class SnippetSerializer(serializers.Serializer):

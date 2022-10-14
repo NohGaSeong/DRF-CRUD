@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'config',
     'tutorial_1',
+    'tutorial_serializer',
 ]
 
 REST_FRAMEWORK = {
