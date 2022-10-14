@@ -23,7 +23,7 @@ from rest_framework import status
 
 
 @api_view(['GET','POST'])
-def snippet_list(request):
+def snippet_list(request, format = None):
     if request.method == 'GET':
         snippets = Snippet.objects.all()
         serializer = SnippetSerializer(Snippet,many=True)
@@ -60,7 +60,7 @@ def snippet_list(request):
 
 
 @api_view(['GET','PUT','DELETE'])
-def snippet_datail(request,pk):
+def snippet_detail(request, pk, format=None):
     try:
         snippet = Snippet.objects.get(pk=pk)
     except Snippet.DoesNotExist:
