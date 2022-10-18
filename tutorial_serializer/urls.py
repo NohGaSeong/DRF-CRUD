@@ -13,5 +13,5 @@ urlpatterns = [
 urlpatterns = format_suffix_patterns(urlpatterns)
 
 urlpatterns += [
-    path('api-auth/',include('rest-framework.urls')),
+    path('api-auth/',include('rest_framework.urls')),
 ]
