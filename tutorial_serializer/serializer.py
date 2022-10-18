@@ -25,9 +25,11 @@ from django.contrib.auth.models import User
 
 # Model Serializer = 특별한 작업을 수행하지 않아도 단순히 serializer 클래스를 만드는 지름길
 class SnippetSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
         model = Snippet
         fields = ['id','title','code','linenos','language','style']
+        owner = serializers.ReadOnlyField(source='owner.username')
 
 class UserSerializer(serializers.ModelSerializer):
     snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())
@@ -35,3 +37,4 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'snippets']
+        owner = serializers.ReadOnlyField(source='owner.username')
