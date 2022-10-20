@@ -1,5 +1,6 @@
 from rest_framework import permissions
 
+
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
     code의 snippet의 owner만 수정할 수 있게 하는 Custom permission 임.
