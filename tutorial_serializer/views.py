@@ -12,6 +12,10 @@ from tutorial_serializer.permission import IsOwnerOrReadOnly
 from tutorial_serializer.serializer import SnippetSerializer
 from tutorial_serializer.models import Snippet
 from rest_framework import status, permissions, mixins, generics
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import permissions
 
 # Tutorial_1
 # @csrf_exempt
@@ -123,30 +127,55 @@ from rest_framework import status, permissions, mixins, generics
 
 ##################################################################################
 
-class SnippetList(generics.ListCreateAPIView):
-    queryset = Snippet.objects.all()
-    serializer_class = SnippetSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    def perform_create(self, serializer):
-        serializer.save(owner = self.request.user)
+# class SnippetList(generics.ListCreateAPIView):
+#     queryset = Snippet.objects.all()
+#     serializer_class = SnippetSerializer
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+#     def perform_create(self, serializer):
+#         serializer.save(owner = self.request.user)
+#
+#
+# class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Snippet.objects.all()
+#     serializer_class = SnippetSerializer
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+#                           IsOwnerOrReadOnly]
 
 
-class SnippetDetail(generics.RetrieveUpdateDestroyAPIView):
+
+# class UserList(generics.ListAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+#
+#
+# class UserDetail(generics.RetrieveAPIView):
+#     queryset = User.objects.all()
+#     serializer_class = UserSerializer
+
+#######################################################
+class SnippetViewSet(viewsets.ModelViewSet):
+    """
+    이 viewset은 `list`, `create`, `retrive`, `update`, `destroy`
+    액션을 자동으로 제공한다
+
+    추가적으로 highlight 액션만 따로 적어주었다
+    """
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly]
 
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    def highlight(self, request, *args, **kwargs):
+        snippet = self.get_object()
+        return Response(snippet.highlighted)
 
-
-class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    이 viewset은 list 와 retire 을 동시에 제공해줌.
+    """
+    querysert = User.objecs.all()
     serializer_class = UserSerializer
-
-
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
 
