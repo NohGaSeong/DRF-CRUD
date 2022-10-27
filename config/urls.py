@@ -17,14 +17,15 @@ from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 
 from django.contrib import admin
+from config.views import HomeView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api2/',include('inflearnDjango.urls')),
-    path('api/', include('inflearnAPI.urls')),
-    path(''. HomeView.as_view(), name = 'home'),
-    path('blog/', include('inflearnBlog.urls')),
+    path('api/', include('api.urls')),
+    path('', HomeView.as_view(), name = 'home'),
+    path('blog/', include('blog.urls')),
     # path('', include(router.urls)),
     # path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

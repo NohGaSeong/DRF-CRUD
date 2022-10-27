@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'config',
     'tutorial_1',
     'tutorial_serializer',
-    'inflearnDjango'
+    'inflearnDjango',
+    'blog',
+    'api',
 ]
 
 REST_FRAMEWORK = {
