@@ -11,6 +11,8 @@
 # ]
 
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 
@@ -19,8 +21,12 @@ from django.contrib import admin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/',include('inflearnDjango.urls')),
-
+    path('api2/',include('inflearnDjango.urls')),
+    path('api/', include('inflearnAPI.urls')),
+    path(''. HomeView.as_view(), name = 'home'),
+    path('blog/', include('inflearnBlog.urls')),
     # path('', include(router.urls)),
     # path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_URL)
