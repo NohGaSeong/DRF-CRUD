@@ -1,13 +1,20 @@
-from django.urls import path,include
-from rest_framework import routers
-from inflearnDjango.views import UserViewSet, PostViewSet, CommentViewSet
-
-router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'post', PostViewSet)
-router.register(r'comment', CommentViewSet)
-
+# from django.urls import path,include
+# from rest_framework import routers
+# from inflearnDjango.views import UserViewSet, PostViewSet, CommentViewSet
+from django.urls import path, include
+from inflearnDjango import views
+# router = routers.DefaultRouter()
+# router.register(r'users', UserViewSet)
+# router.register(r'post', PostViewSet)
+# router.register(r'comment', CommentViewSet)
+#
+#
+# urlpatterns = [
+#     path('',include(router.urls)),
+# ]
 
 urlpatterns = [
-    path('',include(router.urls)),
+    path('post/', views.PostListAPIView.as_view(), name = 'post-list'),
+    path('post/<int:pk>/', views.PostRetrieveAPIView.as_view(), name = 'post-detail'),
+    path('comment/', views.CommentCreateAPIView.as_view(), name = 'comment-list'),
 ]
