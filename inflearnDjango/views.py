@@ -17,10 +17,11 @@
 #     queryset = Comment.objects.all()
 #     serializer_class = CommentSerializer
 # ------------------------------------------------
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
 from blog.models import Post,Comment
-from inflearnDjango.serializers import PostListSerializer, PostRetrieveSerializer, CommentSerializer
-
+from inflearnDjango.serializers import PostListSerializer, PostRetrieveSerializer, CommentSerializer, \
+    PostLikeSerializer
+from rest_framework.response import Response
 # Generic view 의 로직
 # 1. Data from db
 # 2. seriaze //쿼리셋 라인에서 db 로 데이터를 가져와서 serialize 진행. ListAPIView = many= True,
@@ -34,6 +35,30 @@ class PostRetrieveAPIView(RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostRetrieveSerializer
 
+class PostLikeAPIView(UpdateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostLikeSerializer
+
+    # PATCH method
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        # data = instance.like + 1
+        data = {'like': instance.like + 1}
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        # return Response(serializer.data)
+        return Response(data['like'])
+
+
 class CommentCreateAPIView(CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
