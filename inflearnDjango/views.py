@@ -17,10 +17,11 @@
 #     queryset = Comment.objects.all()
 #     serializer_class = CommentSerializer
 # ------------------------------------------------
+from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
-from blog.models import Post,Comment
+from blog.models import Post,Comment, Category, Tag
 from inflearnDjango.serializers import PostListSerializer, PostRetrieveSerializer, CommentSerializer, \
-    PostLikeSerializer
+    PostLikeSerializer,CategorySerializer,CateTagSerializer
 from rest_framework.response import Response
 # Generic view 의 로직
 # 1. Data from db
@@ -61,4 +62,18 @@ class PostLikeAPIView(UpdateAPIView):
 class CommentCreateAPIView(CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+
+class CateTagAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        cateList = Category.objects.all()
+        tagList = Tag.objects.all()
+        data = {
+            'cateList': cateList,
+            'tagList': tagList,
+        }
+
+        serializer = CateTagSerializer(instance=data)
+
+        return Response(serializer.data)
 
