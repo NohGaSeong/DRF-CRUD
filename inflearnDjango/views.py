@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, GenericAPIView
 from blog.models import Post,Comment, Category, Tag
 from inflearnDjango.serializers import PostListSerializer, PostRetrieveSerializer, CommentSerializer, \
-    PostLikeSerializer,CategorySerializer,CateTagSerializer
+    PostLikeSerializer, CategorySerializer, CateTagSerializer, PostSerializerDetail
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from collections import OrderedDict
@@ -34,10 +34,38 @@ from collections import OrderedDict
 #     queryset = Post.objects.all()
 #     serializer_class = PostListSerializer
 
+def get_prev_next(instance):
+    try:
+        prev = instance.get_previous_by_update_dt()
+    except instance.DoesNotExist:
+        prev = None
+
+    try:
+        next_ = instance.get_next_by_update_dt()
+    except instance.DoesNotExist:
+        next_ = None
+
+    return prev, next_
+
+
+
 class PostRetrieveAPIView(RetrieveAPIView):
     queryset = Post.objects.all()
-    serializer_class = PostRetrieveSerializer
+    serializer_class = PostSerializerDetail
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        preInstance = instance.get_previous_by_update_dt()
+        nextInstance = instance.get_next_by_update_dt()
+        commentList = instance.comment_set.all()
+        data = {
+            'post':instance,
+            'prePost':preInstance,
+            'nextPost':nextInstance,
+            'commentList':commentList,
+        }
+        serializer = self.get_serializer(instance=data)
+        return Response(serializer.data)
 
 class PostLikeAPIView(GenericAPIView):
     queryset = Post.objects.all()
