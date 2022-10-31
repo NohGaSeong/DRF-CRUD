@@ -9,9 +9,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url','username','email','is_staff']
 
 class PostListSerializer(serializers.ModelSerializer):
+    category = serializers.ReadOnlyField(source='category.name')
     class Meta:
         model = Post
-        fields = ['id','title','image','like','category']
+        fields = ['id', 'title', 'image', 'like', 'category']
 
 
 class PostRetrieveSerializer(serializers.ModelSerializer):

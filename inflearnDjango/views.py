@@ -18,53 +18,65 @@
 #     serializer_class = CommentSerializer
 # ------------------------------------------------
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, GenericAPIView
 from blog.models import Post,Comment, Category, Tag
 from inflearnDjango.serializers import PostListSerializer, PostRetrieveSerializer, CommentSerializer, \
     PostLikeSerializer,CategorySerializer,CateTagSerializer
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
+from collections import OrderedDict
 # Generic view 의 로직
 # 1. Data from db
 # 2. seriaze //쿼리셋 라인에서 db 로 데이터를 가져와서 serialize 진행. ListAPIView = many= True,
                                                             # RetrieveAPIView = many = False
 # 3. response
-class PostListAPIView(ListAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostListSerializer
+# class PostListAPIView(ListAPIView):
+#     queryset = Post.objects.all()
+#     serializer_class = PostListSerializer
 
 class PostRetrieveAPIView(RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostRetrieveSerializer
 
-class PostLikeAPIView(UpdateAPIView):
+
+class PostLikeAPIView(GenericAPIView):
     queryset = Post.objects.all()
-    serializer_class = PostLikeSerializer
+    # serializer_class = PostLikeSerializer
 
     # PATCH method
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
+    # def update(self, request, *args, **kwargs):
+    #     partial = kwargs.pop('partial', False)
+    #     instance = self.get_object()
+    #     # data = instance.like + 1
+    #     data = {'like': instance.like + 1}
+    #     serializer = self.get_serializer(instance, data=data, partial=partial)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_update(serializer)
+    #
+    #     if getattr(instance, '_prefetched_objects_cache', None):
+    #         # If 'prefetch_related' has been applied to a queryset, we need to
+    #         # forcibly invalidate the prefetch cache on the instance.
+    #         instance._prefetched_objects_cache = {}
+    #
+    #     # return Response(serializer.data)
+    #     return Response(data['like'])
+
+    # GetMethod
+    queryset = Post.objects.all()
+    # serializer_class = PostLikeSerializer
+
+    def get(self, request, *args, **kwargs):
         instance = self.get_object()
-        # data = instance.like + 1
-        data = {'like': instance.like + 1}
-        serializer = self.get_serializer(instance, data=data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
-            instance._prefetched_objects_cache = {}
-
-        # return Response(serializer.data)
-        return Response(data['like'])
-
+        instance.like += 1
+        instance.save()
+        return Response(instance.like)
 
 class CommentCreateAPIView(CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
 
-class CateTagAPIView(APIView):
+class CateTagAPIView(APIView ):
     def get(self, request, *args, **kwargs):
         cateList = Category.objects.all()
         tagList = Tag.objects.all()
@@ -76,4 +88,26 @@ class CateTagAPIView(APIView):
         serializer = CateTagSerializer(instance=data)
 
         return Response(serializer.data)
+
+class PostPageNumberPagination(PageNumberPagination):
+    page_size = 3
+
+    def get_paginated_response(self, data):
+        return Response(OrderedDict([
+            ('postList', data),
+            ('pageCnt', self.page.paginator.num_pages),
+            ('curPage', self.page.number),
+        ]))
+
+class PostListAPIView(ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostListSerializer
+    pagination_class = PostPageNumberPagination
+
+    def get_serializer_context(self):
+        return {
+            'request':None,
+            'format':self.format_kwarg,
+            'view':self
+        }
 
