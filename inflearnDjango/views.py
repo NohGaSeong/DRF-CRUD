@@ -67,6 +67,13 @@ class PostRetrieveAPIView(RetrieveAPIView):
         serializer = self.get_serializer(instance=data)
         return Response(serializer.data)
 
+    def get_serializer_context(self):
+        return {
+            'request':None,
+            'format': self.format_kwarg,
+            'view':self
+        }
+
 class PostLikeAPIView(GenericAPIView):
     queryset = Post.objects.all()
     # serializer_class = PostLikeSerializer
